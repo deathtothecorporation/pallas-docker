@@ -1,0 +1,4 @@
+[submodule "docker-context/pallas"]
+	path = docker-context/pallas
+	url = git@github.com:deathtothecorporation/pallas.git
+	branch = docker

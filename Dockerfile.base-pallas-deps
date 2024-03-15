@@ -1,0 +1,56 @@
+# Use an official base image that has curl and other necessary tools
+FROM ubuntu:latest as builder
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gpg \
+    gcc \
+    g++ \
+    libc6-dev \
+    libffi-dev \
+    libtinfo5 \
+    libtinfo6 \
+    libgmp-dev \
+    zlib1g-dev \
+    git \
+    netbase \
+    make \
+    xz-utils \
+    liblmdb-dev \
+    zlib1g-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and execute the Stack installation script
+RUN curl -sSL https://get.haskellstack.org/ | sh
+
+# Verify Stack installation
+RUN stack --version
+
+COPY ./docker-context/pallas /app/pallas
+WORKDIR /app/pallas
+
+RUN stack install
+RUN stack path --local-install-root
+
+RUN mkdir /app/bin
+RUN cp $(stack path --local-install-root)/bin/* /app/bin
+
+### ---- ###
+
+# Runtime stage
+FROM ubuntu:latest as runtime
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    liblmdb-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy binaries from the builder stage
+# TODO: to trim, can try copying ONLY /usr/local/bin/plunder
+COPY --from=builder /app/bin /usr/local/bin
+
+# Ensure the binaries are executable and on the PATH
+RUN chmod +x /usr/local/bin/*

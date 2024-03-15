@@ -1,0 +1,19 @@
+# Use the base pallas dependencies image
+FROM pallas-deps-no-pallas-dir:latest
+
+# Bring _JUST_ the sire files in
+COPY ./docker-context/pallas/sire /app/pallas/sire
+
+# Bring in any other files needed (for UI or boot)
+COPY ./docker-context/<your-cog-ui-and-start-files> /app/pallas/<cog-extras-dir-name>
+
+# Prepare things
+run mkdir -p /app/pallas/.ships
+WORKDIR /app/pallas
+run chmod +x /app/pallas/<cog-extras-dir-name>/start.sh
+
+# Start the cog from the startup script
+ENTRYPOINT ["/app/pallas/<cog-extras-dir-name>/start.sh"]
+
+# No arguments here; use above entrypoint:
+CMD []

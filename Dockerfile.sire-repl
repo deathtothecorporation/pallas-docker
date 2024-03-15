@@ -1,0 +1,11 @@
+# Use the base pallas dependencies image
+FROM pallas-deps-no-pallas-dir:latest
+
+# Bring _JUST_ the sire files in
+COPY ./docker-context/pallas/sire /app/pallas/sire
+
+# Prepare things
+run mkdir -p /app/pallas/.ships
+WORKDIR /app/pallas
+
+CMD plunder sire sire/prelude.sire

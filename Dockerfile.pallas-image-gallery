@@ -1,0 +1,10 @@
+FROM pallas-deps-no-pallas-dir:latest
+
+COPY ./docker-context/pallas/sire /app/pallas/sire
+COPY ./docker-context/image-gallery-app /app/pallas/image-gallery
+run mkdir -p /app/pallas/.ships
+WORKDIR /app/pallas
+run chmod +x /app/pallas/image-gallery/start.sh
+ENTRYPOINT ["/app/pallas/image-gallery/start.sh"]
+# No arguments:
+CMD []

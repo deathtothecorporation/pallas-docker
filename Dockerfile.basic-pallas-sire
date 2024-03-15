@@ -1,0 +1,4 @@
+FROM pallas-deps-no-pallas-dir:latest
+
+COPY ./docker-context/pallas/sire /app/pallas/sire
+WORKDIR /app/pallas
