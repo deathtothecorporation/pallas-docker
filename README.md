@@ -62,7 +62,7 @@ container, go from 1 -> 2.
           caught by this `.sh` file and used to help bootstrap the cog.
         - Note also: `FROM pallas-deps-no-pallas-dir:latest` - this is the name of
           the image created in step #1.
-        - See `docker-context/image-gallery-app` for an example. For instance, these
+        - See `docker-context/image-gallery-app/start.sh` for an example. For instance, these
           lines:
             ```
               SIRE_FILE="sire/demo_image_gallery.sire"
@@ -74,10 +74,10 @@ container, go from 1 -> 2.
     3. Start that cog: `docker run -e "ANY_ENV_YOU_NEED=goes-here" -p <some-host-port>:8080 mycog`
         - Or use an env file `docker run --env-file .env mycog`
         - For testing, you probably want to pass `-it -name <some-name>` to keep the
-        container interactive so you want watch the logs, etc.
+        container interactive if you want watch the logs, etc.
 
 **By the end of step 3 above, you should have a docker image that boots up a plunder
-ship running a single cog, nearly instantly.**  
+ship running a single cog, nearly instantaneously.**  
 This is useful for local development on various host machines, or for hosted
 environments.
 
