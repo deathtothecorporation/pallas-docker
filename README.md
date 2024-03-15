@@ -38,10 +38,10 @@ build a cog-specific container, go from 1 -> 3. if you just want a basic sire
 container, go from 1 -> 2.
 
 1. Get a base Pallas image:
-  A. Pull from Docker Hub registry (Recommended):
+  - Option 1: Pull from Docker Hub registry (Recommended):
     - Pull the image: `$ docker pull deathtothecorporation/pallas-deps`
     - Tag it for use here `$ docker tag deathtothecorporation/pallas-deps pallas-deps-no-pallas-dir:latest`
-  B: Build it yourself: Build a base ubuntu image that has the pallas binaries without all the Haskell stack stuff: `$ docker build -f Dockerfile.base-pallas-deps -t pallas-deps-no-pallas-dir .` (**note the dot at the end!**)
+  - Option 2: Build it yourself: Build a base ubuntu image that has the pallas binaries without all the Haskell stack stuff: `$ docker build -f Dockerfile.base-pallas-deps -t pallas-deps-no-pallas-dir .` (**note the dot at the end!**)
     - If there are pallas updates you need to integrate, pass `--no-cache` here to make sure `stack install` runs again. If you're running this for the first time, the `--no-cache` is irrelevant
     - `stack install` will take a long time.
     - This works by first doing a `builder` stage that uses Stack to build pallas.
