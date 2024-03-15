@@ -51,33 +51,32 @@ container, go from 1 -> 2.
       dependencies. In step 3, we'll bring in the sire files on their own and,
       combining the binaries from this image and the sire files from the
       docker-context, we can run pallas.
-2. (Optional, probably skip) Get a sire image (pallas deps plus sire directory and nothing else):
-   `$ docker build -f Dockerfile.basic-pallas-sire -t just-sire .`
-  - uses the `pallas-deps-no-pallas-dir` image as a base.
-  - this image isn't actually used in this project, but it might be useful to get a sire-only image
+2. (Optional, probably skip) Get a sire image (pallas deps plus sire directory and nothing else): `$ docker build -f Dockerfile.basic-pallas-sire -t just-sire .`
+    - uses the `pallas-deps-no-pallas-dir` image as a base.
+    - this image isn't actually used in this project, but it might be useful to get a sire-only image
 3. Build and run a cog-specific image:
-  1. Create a `Dockerfile.<some-name-for-your-cog>` based off `Dockerfile.cog-template`
-    - in the above template, `<your-cog-ui-and-start-files>` will be specific to
-      your app, but typically will contain built UI files and a `start.sh`
-      entrypoint for docker to run. Any ENV variables that may be necessary can be
-      caught by this `.sh` file and used to help bootstrap the cog.
-    - Note also: `FROM pallas-deps-no-pallas-dir:latest` - this is the name of
-      the image created in step #1.
-    - See `docker-context/image-gallery-app` for an example. For instance, these
-      lines:
-        ```
-          SIRE_FILE="sire/demo_image_gallery.sire"
-          UI_DIR="image-gallery/image-gallery-ui"
-        ```
-      Determine the sire file and the ui directory (the build UI files from
-      above step) that will be uploaded on boot.
-  2. Build the image: `$ docker build -f Dockerfile.<some-name-for-your-cog> -t
-     mycog .`
-  3. Start that cog: `docker run -e "ANY_ENV_YOU_NEED=goes-here" -p
-     <some-host-port>:8080 mycog`
-    - Or use an env file `docker run --env-file .env mycog`
-    - For testing, you probably want to pass `-it -name <some-name>` to keep the
-    container interactive so you want watch the logs, etc.
+    1. Create a `Dockerfile.<some-name-for-your-cog>` based off `Dockerfile.cog-template`
+      - in the above template, `<your-cog-ui-and-start-files>` will be specific to
+        your app, but typically will contain built UI files and a `start.sh`
+        entrypoint for docker to run. Any ENV variables that may be necessary can be
+        caught by this `.sh` file and used to help bootstrap the cog.
+      - Note also: `FROM pallas-deps-no-pallas-dir:latest` - this is the name of
+        the image created in step #1.
+      - See `docker-context/image-gallery-app` for an example. For instance, these
+        lines:
+          ```
+            SIRE_FILE="sire/demo_image_gallery.sire"
+            UI_DIR="image-gallery/image-gallery-ui"
+          ```
+        Determine the sire file and the ui directory (the build UI files from
+        above step) that will be uploaded on boot.
+    2. Build the image: `$ docker build -f Dockerfile.<some-name-for-your-cog> -t
+       mycog .`
+    3. Start that cog: `docker run -e "ANY_ENV_YOU_NEED=goes-here" -p
+       <some-host-port>:8080 mycog`
+      - Or use an env file `docker run --env-file .env mycog`
+      - For testing, you probably want to pass `-it -name <some-name>` to keep the
+      container interactive so you want watch the logs, etc.
 
 **By the end of step 3 above, you should have a docker image that boots up a plunder
 ship running a single cog, nearly instantly.**  
