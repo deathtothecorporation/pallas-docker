@@ -11,7 +11,7 @@ that, do `git submodule update --init --recursive`
 # Disclaimers
 
 This repo uses Vaporware's fork of Plunder ("Pallas"). For now, it's not too far
-off the upstream, but as Pallas continues building towards a system that can support end-user
+off the upstream, but as Pallas continues building toward a system that can support end-user
 apps it may drift further.
 
 One major difference in this Docker+Pallas context is **the runtime forces cogs
@@ -25,27 +25,32 @@ it's gonna take a little while.
 
 # Building cog-specific images
 
-This process gets you an image that just runs a single cog in a container.
+This process gets you an image that just runs a single cog on a ship in a container.
 
 In step 1, a build phase creates all the pallas dependencies, followed by a
 runtime phase that takes just the binaries needed and starts a fresh image. This
 keeps the runtime container relatively trim (but more can be done, see `TODO`
-below)
+below).
+Alternatively, you can just pull our pre-built image.
 
 Both steps 2 and 3 rely on step 1, so definitely do Step 1 first. If you want to
 build a cog-specific container, go from 1 -> 3. if you just want a basic sire
 container, go from 1 -> 2.
 
-1. Build a base ubuntu image that has the pallas binaries without all the Haskell stack stuff: `$ docker build -f Dockerfile.base-pallas-deps -t pallas-deps-no-pallas-dir .` (**note the dot at the end!**)
-  - If there are pallas updates you need to integrate, pass `--no-cache` here to make sure `stack install` runs again. If you're running this for the first time, the `--no-cache` is irrelevant
-  - `stack install` will take a long time.
-  - This works by first doing a `builder` stage that uses Stack to build pallas.
-  Then a `runtime` stage creates a fresh ubuntu image, copying in the binaries
-  from the `builder` stage. The resulting `runtime` image is much smaller than
-  the `builder` image - it's pretty much just the plunder binaries and some other
-  dependencies. In step 3, we'll bring in the sire files on their own and,
-  combining the binaries from this image and the sire files from the
-  docker-context, we can run pallas.
+1. Get a base Pallas image:
+  A. Pull from Docker Hub registry (Recommended):
+    - Pull the image: `$ docker pull deathtothecorporation/pallas-deps`
+    - Tag it for use here `$ docker tag deathtothecorporation/pallas-deps pallas-deps-no-pallas-dir:latest`
+  B: Build it yourself: Build a base ubuntu image that has the pallas binaries without all the Haskell stack stuff: `$ docker build -f Dockerfile.base-pallas-deps -t pallas-deps-no-pallas-dir .` (**note the dot at the end!**)
+    - If there are pallas updates you need to integrate, pass `--no-cache` here to make sure `stack install` runs again. If you're running this for the first time, the `--no-cache` is irrelevant
+    - `stack install` will take a long time.
+    - This works by first doing a `builder` stage that uses Stack to build pallas.
+      Then a `runtime` stage creates a fresh ubuntu image, copying in the binaries
+      from the `builder` stage. The resulting `runtime` image is much smaller than
+      the `builder` image - it's pretty much just the plunder binaries and some other
+      dependencies. In step 3, we'll bring in the sire files on their own and,
+      combining the binaries from this image and the sire files from the
+      docker-context, we can run pallas.
 2. (Optional, probably skip) Get a sire image (pallas deps plus sire directory and nothing else):
    `$ docker build -f Dockerfile.basic-pallas-sire -t just-sire .`
   - uses the `pallas-deps-no-pallas-dir` image as a base.
@@ -84,8 +89,15 @@ environments.
 
 Okay.
 
-1. Follow step 1 above to get a base pallas image.
-2. Then build a repl image: `docker build -f Dockerfile.sire-repl -t repl .`
+## The easy way:
+
+1. `$ docker pull deathtothecorporation/sire-repl`
+2. `$ docker run -it deathtothecorporation/sire-repl`
+
+## The harder way:
+
+1. Get a base image from step 1 above.
+2. Build a repl image: `docker build -f Dockerfile.sire-repl -t repl .`
 3. Finally, start a container: `docker run -it repl`
 
 This runs `plunder sire sire/prelude.sire`. See the `prelude.sire` file if
@@ -105,4 +117,6 @@ you're curious about how it works.
 - [x] include plunder/pallas as a submodule
 - [ ] try an alpine build for much smaller size - will be harder to get the build right though
 - [ ] trim binaries in runtime stage
-- [ ] push pallas image to a private docker hub to avoid having to rebuild
+- [x] push pallas image to a private docker hub to avoid having to rebuild
+- [ ] rename image tags in Dockerfiles so that manual tagging isn't required
+      after pulling from registry
